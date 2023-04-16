@@ -1,0 +1,21 @@
+{
+  "name": "xirelogy/magpie-excelled",
+  "description": "Excel import/export helper library",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "JingXiang Tou",
+      "email": "jx@tou.st"
+    }
+  ],
+  "require": {
+    "phpoffice/phpspreadsheet": "^1.28",
+    "xirelogy/magpie-core": "^0.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "MagpieLib\\Excelled\\": "src"
+    }
+  }
+}

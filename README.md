@@ -1,0 +1,1 @@
+# Excel import/export helper library for PHP-magpie
