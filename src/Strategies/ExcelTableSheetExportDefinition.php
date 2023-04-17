@@ -50,7 +50,7 @@ class ExcelTableSheetExportDefinition extends ExcelSheetExportDefinition
     /**
      * @inheritDoc
      */
-    protected function onRun(ExcelExportServiceable $service) : void
+    protected function onRun(ExcelExportServiceable $service, ?string &$mimeType = null) : void
     {
         /** @var array<string, ColumnMetadata> $columns */
         $columns = [];
@@ -109,7 +109,7 @@ class ExcelTableSheetExportDefinition extends ExcelSheetExportDefinition
         $sheetService->freezePane($totalHeaderRows, 0);
 
         // Finalize
-        $service->finalize();
+        $service->finalize($mimeType);
     }
 
 

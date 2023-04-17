@@ -38,15 +38,16 @@ class ExcelExporter
     /**
      * Export to given target
      * @param TargetWritable $target
+     * @param string|null $mimeType
      * @return void
      * @throws SafetyCommonException
      * @throws PersistenceException
      * @throws StreamException
      */
-    public function to(TargetWritable $target) : void
+    public function to(TargetWritable $target, ?string &$mimeType = null) : void
     {
         $service = new DefaultExcelExportService($this->columnAdapter, $target);
-        $this->def->_run($service);
+        $this->def->_run($service, $mimeType);
     }
 
 

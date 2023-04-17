@@ -6,6 +6,7 @@ use Magpie\Exceptions\GeneralPersistenceException;
 use Magpie\Exceptions\SafetyCommonException;
 use Magpie\Exceptions\UnsupportedValueException;
 use Magpie\Facades\FileSystem\Providers\Local\LocalFileWriteTarget;
+use Magpie\Facades\Mime\Mime;
 use Magpie\General\Concepts\TargetWritable;
 use MagpieLib\Excelled\Concepts\ExcelColumnAdaptable;
 use MagpieLib\Excelled\Concepts\Services\ExcelExportServiceable;
@@ -70,9 +71,10 @@ class DefaultExcelExportService implements ExcelExportServiceable
     /**
      * @inheritDoc
      */
-    public function finalize() : void
+    public function finalize(?string &$mimeType = null) : void
     {
         $writer = new PhpOfficeWriterXlsx($this->workbook);
+        $mimeType = Mime::getMimeType('xlsx');
 
         if (!$this->target instanceof LocalFileWriteTarget) {
             throw new UnsupportedValueException($this->target, _l('write target'));

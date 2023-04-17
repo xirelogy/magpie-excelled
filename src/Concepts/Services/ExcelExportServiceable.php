@@ -24,12 +24,13 @@ interface ExcelExportServiceable
 
     /**
      * Finalize the output
+     * @param string|null $mimeType
      * @return void
      * @throws SafetyCommonException
      * @throws PersistenceException
      * @throws StreamException
      */
-    public function finalize() : void;
+    public function finalize(?string &$mimeType = null) : void;
 
 
     /**
