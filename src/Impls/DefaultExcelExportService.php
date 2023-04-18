@@ -8,6 +8,7 @@ use Magpie\Exceptions\UnsupportedValueException;
 use Magpie\Facades\FileSystem\Providers\Local\LocalFileWriteTarget;
 use Magpie\Facades\Mime\Mime;
 use Magpie\General\Concepts\TargetWritable;
+use Magpie\General\Contexts\ScopedCollection;
 use MagpieLib\Excelled\Concepts\ExcelColumnAdaptable;
 use MagpieLib\Excelled\Concepts\Services\ExcelExportServiceable;
 use MagpieLib\Excelled\Concepts\Services\ExcelSheetExportServiceable;
@@ -79,6 +80,9 @@ class DefaultExcelExportService implements ExcelExportServiceable
         if (!$this->target instanceof LocalFileWriteTarget) {
             throw new UnsupportedValueException($this->target, _l('write target'));
         }
+
+        $scoped = new ScopedCollection($this->target->getScopes());
+        _used($scoped);
 
         try {
             $writer->save($this->target->path);
