@@ -2,9 +2,7 @@
 
 namespace MagpieLib\Excelled\Concepts\Services;
 
-use Magpie\Exceptions\PersistenceException;
 use Magpie\Exceptions\SafetyCommonException;
-use Magpie\Exceptions\StreamException;
 
 /**
  * Service interface to export to Excel sheet
