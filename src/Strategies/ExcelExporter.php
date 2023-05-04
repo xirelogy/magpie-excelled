@@ -6,7 +6,7 @@ use Magpie\Exceptions\PersistenceException;
 use Magpie\Exceptions\SafetyCommonException;
 use Magpie\Exceptions\StreamException;
 use Magpie\General\Concepts\TargetWritable;
-use MagpieLib\Excelled\Concepts\ExcelColumnAdaptable;
+use MagpieLib\Excelled\Concepts\ExcelFormatterAdaptable;
 use MagpieLib\Excelled\Impls\DefaultExcelExportService;
 
 /**
@@ -19,9 +19,9 @@ class ExcelExporter
      */
     protected readonly ExcelExportDefinition $def;
     /**
-     * @var ExcelColumnAdaptable Adapter for column
+     * @var ExcelFormatterAdaptable Adapter for formatter
      */
-    protected ExcelColumnAdaptable $columnAdapter;
+    protected ExcelFormatterAdaptable $formatAdapter;
 
 
     /**
@@ -31,7 +31,7 @@ class ExcelExporter
     protected function __construct(ExcelExportDefinition $def)
     {
         $this->def = $def;
-        $this->columnAdapter = new DefaultExcelColumnAdapter();
+        $this->formatAdapter = new DefaultExcelFormatterAdapter();
     }
 
 
@@ -46,7 +46,7 @@ class ExcelExporter
      */
     public function to(TargetWritable $target, ?string &$mimeType = null) : void
     {
-        $service = new DefaultExcelExportService($this->columnAdapter, $target);
+        $service = new DefaultExcelExportService($this->formatAdapter, $target);
         $this->def->_run($service, $mimeType);
     }
 

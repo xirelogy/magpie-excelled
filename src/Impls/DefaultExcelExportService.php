@@ -9,9 +9,10 @@ use Magpie\Facades\FileSystem\Providers\Local\LocalFileWriteTarget;
 use Magpie\Facades\Mime\Mime;
 use Magpie\General\Concepts\TargetWritable;
 use Magpie\General\Contexts\ScopedCollection;
-use MagpieLib\Excelled\Concepts\ExcelColumnAdaptable;
+use MagpieLib\Excelled\Concepts\ExcelFormatterAdaptable;
 use MagpieLib\Excelled\Concepts\Services\ExcelExportServiceable;
 use MagpieLib\Excelled\Concepts\Services\ExcelSheetExportServiceable;
+use MagpieLib\Excelled\Constants\ExcelCellFormat;
 use MagpieLib\Excelled\Objects\ColumnDefinition;
 use MagpieLib\Excelled\Objects\ExcelColumnDefinition;
 use PhpOffice\PhpSpreadsheet\Spreadsheet as PhpOfficeSpreadsheet;
@@ -29,9 +30,9 @@ class DefaultExcelExportService implements ExcelExportServiceable
      */
     protected PhpOfficeSpreadsheet $workbook;
     /**
-     * @var ExcelColumnAdaptable Column adapter
+     * @var ExcelFormatterAdaptable Format adapter
      */
-    protected readonly ExcelColumnAdaptable $columnAdapter;
+    protected readonly ExcelFormatterAdaptable $formatAdapter;
     /**
      * @var TargetWritable Write target
      */
@@ -40,11 +41,11 @@ class DefaultExcelExportService implements ExcelExportServiceable
 
     /**
      * Constructor
-     * @param ExcelColumnAdaptable $columnAdapter
+     * @param ExcelFormatterAdaptable $formatAdapter
      * @param TargetWritable $target
      * @throws SafetyCommonException
      */
-    public function __construct(ExcelColumnAdaptable $columnAdapter, TargetWritable $target)
+    public function __construct(ExcelFormatterAdaptable $formatAdapter, TargetWritable $target)
     {
         $this->workbook = new PhpOfficeSpreadsheet();
 
@@ -53,7 +54,7 @@ class DefaultExcelExportService implements ExcelExportServiceable
             OfficeExcepts::protect(fn () => $this->workbook->removeSheetByIndex(0));
         }
 
-        $this->columnAdapter = $columnAdapter;
+        $this->formatAdapter = $formatAdapter;
         $this->target = $target;
     }
 
@@ -99,6 +100,13 @@ class DefaultExcelExportService implements ExcelExportServiceable
     {
         if ($column instanceof ExcelColumnDefinition) return $column;
 
-        return $this->columnAdapter->adapt($column);
+        $format = $column->format;
+        if ($format === null) {
+            return ExcelColumnDefinition::adapt($column, ExcelCellFormat::GENERAL);
+        }
+
+        $excelFormat = $this->formatAdapter->adapt($format);
+        $excelFormatString = $excelFormat->getExcelFormatString() ?? ExcelCellFormat::GENERAL;
+        return ExcelColumnDefinition::adapt($column, $excelFormatString);
     }
 }
