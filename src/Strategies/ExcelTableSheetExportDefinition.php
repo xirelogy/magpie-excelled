@@ -119,6 +119,7 @@ class ExcelTableSheetExportDefinition extends ExcelSheetExportDefinition
             $sheetService->freezePane($totalHeaderRows, 0);
 
             // Finalize
+            $this->schema->finalizeSheet($sheetService);
             $service->finalize($mimeType);
         } finally {
             $this->schema->_setColumnIndexResolver(null);

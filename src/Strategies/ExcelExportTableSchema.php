@@ -11,7 +11,7 @@ use MagpieLib\Excelled\Objects\ColumnDefinition;
 /**
  * A schema to export Excel as a table
  */
-abstract class ExcelExportTableSchema implements TableExportable
+abstract class ExcelExportTableSchema extends ExcelExportSheetSchema implements TableExportable
 {
     /**
      * @var Closure|null Column index resolver
