@@ -5,9 +5,11 @@ namespace MagpieLib\Excelled\Impls;
 use Magpie\Codecs\Formats\Formatter;
 use Magpie\Exceptions\UnsupportedException;
 use Magpie\General\Concepts\Releasable;
+use Magpie\General\Str;
 use MagpieLib\Excelled\Concepts\ExcelFormatterAdaptable;
 use MagpieLib\Excelled\Concepts\Services\ExcelCellExportServiceable;
 use MagpieLib\Excelled\Concepts\Services\ExcelSheetExportServiceable;
+use MagpieLib\Excelled\Objects\ExcelComment;
 use MagpieLib\Excelled\Strategies\ExcelNames;
 use PhpOffice\PhpSpreadsheet\Style\Style as PhpOfficeStyle;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet as PhpOfficeWorksheet;
@@ -92,6 +94,23 @@ class DefaultExcelCellExportService extends DefaultExcelGeneralExportService imp
         } else {
             $this->worksheet->setCellValue($this->cellName, $value);
         }
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function setComment(ExcelComment $comment) : void
+    {
+        OfficeExcepts::protect(function () use ($comment) {
+            $excelComment = $this->worksheet->getComment($this->cellName);
+
+            if (!Str::isNullOrEmpty($comment->author)) {
+                $excelComment->setAuthor($comment->author);
+            }
+
+            $excelComment->getText()->createTextRun($comment->content);
+        });
     }
 
 
