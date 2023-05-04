@@ -58,6 +58,17 @@ class DefaultExcelSheetExportService implements ExcelSheetExportServiceable
     /**
      * @inheritDoc
      */
+    public function activate() : void
+    {
+        OfficeExcepts::protect(function () {
+            $this->worksheet->getParent()->setActiveSheetIndexByName($this->worksheet->getTitle());
+        });
+    }
+
+
+    /**
+     * @inheritDoc
+     */
     public function accessRow(int $row) : ExcelRowExportServiceable
     {
         return new DefaultExcelRowExportService($this, $this->worksheet, $row);

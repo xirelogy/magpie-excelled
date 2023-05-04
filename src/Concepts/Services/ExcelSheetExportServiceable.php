@@ -10,6 +10,14 @@ use Magpie\Exceptions\SafetyCommonException;
 interface ExcelSheetExportServiceable extends ExcelResourceManageable
 {
     /**
+     * Activate current sheet
+     * @return void
+     * @throws SafetyCommonException
+     */
+    public function activate() : void;
+
+
+    /**
      * Access a row
      * @param int $row
      * @return ExcelRowExportServiceable
