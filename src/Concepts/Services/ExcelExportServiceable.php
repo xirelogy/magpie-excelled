@@ -5,6 +5,7 @@ namespace MagpieLib\Excelled\Concepts\Services;
 use Magpie\Exceptions\PersistenceException;
 use Magpie\Exceptions\SafetyCommonException;
 use Magpie\Exceptions\StreamException;
+use Magpie\General\Concepts\TargetReadable;
 use MagpieLib\Excelled\Objects\ColumnDefinition;
 use MagpieLib\Excelled\Objects\ExcelColumnDefinition;
 
@@ -13,6 +14,24 @@ use MagpieLib\Excelled\Objects\ExcelColumnDefinition;
  */
 interface ExcelExportServiceable extends ExcelResourceManageable
 {
+    /**
+     * Load from given target, replacing the default (blank) / current workbook
+     * @param TargetReadable $target
+     * @return void
+     * @throws SafetyCommonException
+     */
+    public function load(TargetReadable $target) : void;
+
+
+    /**
+     * Access sheet by given name
+     * @param string $sheetName
+     * @return ExcelSheetExportServiceable
+     * @throws SafetyCommonException
+     */
+    public function accessSheet(string $sheetName) : ExcelSheetExportServiceable;
+
+
     /**
      * Create a new sheet
      * @param string|null $sheetName

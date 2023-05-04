@@ -8,6 +8,7 @@ use Magpie\Exceptions\UnsupportedValueException;
 use Magpie\Facades\FileSystem\Providers\Local\LocalFileWriteTarget;
 use Magpie\Facades\Mime\Mime;
 use Magpie\General\Concepts\Releasable;
+use Magpie\General\Concepts\TargetReadable;
 use Magpie\General\Concepts\TargetWritable;
 use Magpie\General\Contexts\ScopedCollection;
 use Magpie\Objects\ReleasableCollection;
@@ -75,6 +76,25 @@ class DefaultExcelExportService implements ExcelExportServiceable
     }
 
 
+    /**
+     * Load from given target, replacing the default (blank) / current workbook
+     * @param TargetReadable $target
+     * @return void
+     * @throws SafetyCommonException
+     */
+    public function load(TargetReadable $target) : void
+    {
+        $this->workbook = ExcelIO::readWorkbookFromTarget($target);
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function accessSheet(string $sheetName) : ExcelSheetExportServiceable
+    {
+        $worksheet = $this->workbook->getSheetByName($sheetName) ?? throw new UnsupportedValueException($sheetName);
+        return new DefaultExcelSheetExportService($this, $worksheet, $this->formatAdapter);
     }
 
 
