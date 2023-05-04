@@ -3,14 +3,10 @@
 namespace MagpieLib\Excelled\Strategies;
 
 use Magpie\Exceptions\SafetyCommonException;
-use Magpie\Exceptions\UnsupportedValueException;
-use Magpie\General\Concepts\PathTargetReadable;
 use Magpie\General\Concepts\TargetReadable;
-use Magpie\General\Contexts\ScopedCollection;
 use MagpieLib\Excelled\Concepts\Services\ExcelImportServiceable;
 use MagpieLib\Excelled\Impls\DefaultExcelImportService;
-use MagpieLib\Excelled\Impls\OfficeExcepts;
-use PhpOffice\PhpSpreadsheet\IOFactory as PhpOfficeIOFactory;
+use MagpieLib\Excelled\Impls\ExcelIO;
 use PhpOffice\PhpSpreadsheet\Spreadsheet as PhpOfficeSpreadsheet;
 
 /**
@@ -31,19 +27,7 @@ class ExcelImporter
      */
     protected function __construct(TargetReadable $target)
     {
-        if (!$target instanceof PathTargetReadable) throw new UnsupportedValueException($target);
-
-        $scoped = new ScopedCollection($target->getScopes());
-        _used($scoped);
-
-        $path = $target->getPath();
-
-        OfficeExcepts::protect(function () use ($path) {
-            $type = PhpOfficeIOFactory::identify($path);
-            $reader = PhpOfficeIOFactory::createReader($type);
-
-            $this->workbook = $reader->load($path);
-        });
+        $this->workbook = ExcelIO::readWorkbookFromTarget($target);
     }
 
 
