@@ -11,7 +11,7 @@ use MagpieLib\Excelled\Objects\ExcelColumnDefinition;
 /**
  * Service interface to export to Excel
  */
-interface ExcelExportServiceable
+interface ExcelExportServiceable extends ExcelResourceManageable
 {
     /**
      * Create a new sheet

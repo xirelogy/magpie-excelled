@@ -7,8 +7,10 @@ use Magpie\Exceptions\SafetyCommonException;
 use Magpie\Exceptions\UnsupportedValueException;
 use Magpie\Facades\FileSystem\Providers\Local\LocalFileWriteTarget;
 use Magpie\Facades\Mime\Mime;
+use Magpie\General\Concepts\Releasable;
 use Magpie\General\Concepts\TargetWritable;
 use Magpie\General\Contexts\ScopedCollection;
+use Magpie\Objects\ReleasableCollection;
 use MagpieLib\Excelled\Concepts\ExcelFormatterAdaptable;
 use MagpieLib\Excelled\Concepts\Services\ExcelExportServiceable;
 use MagpieLib\Excelled\Concepts\Services\ExcelSheetExportServiceable;
@@ -37,6 +39,10 @@ class DefaultExcelExportService implements ExcelExportServiceable
      * @var TargetWritable Write target
      */
     protected readonly TargetWritable $target;
+    /**
+     * @var ReleasableCollection To be released after finalization
+     */
+    protected ReleasableCollection $releasedAfterFinalize;
 
 
     /**
@@ -56,6 +62,19 @@ class DefaultExcelExportService implements ExcelExportServiceable
 
         $this->formatAdapter = $formatAdapter;
         $this->target = $target;
+        $this->releasedAfterFinalize = new ReleasableCollection();
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function addReleasable(Releasable $resource) : void
+    {
+        $this->releasedAfterFinalize->add($resource);
+    }
+
+
     }
 
 
@@ -66,7 +85,7 @@ class DefaultExcelExportService implements ExcelExportServiceable
     {
         $worksheet = $this->workbook->createSheet();
         if ($sheetName !== null) $worksheet->setTitle($sheetName);
-        return new DefaultExcelSheetExportService($worksheet);
+        return new DefaultExcelSheetExportService($this, $worksheet);
     }
 
 
@@ -89,6 +108,8 @@ class DefaultExcelExportService implements ExcelExportServiceable
             $writer->save($this->target->path);
         } catch (PhpOfficeWriterException $ex) {
             throw new GeneralPersistenceException(previous: $ex);
+        } finally {
+            $this->releasedAfterFinalize->release();
         }
     }
 

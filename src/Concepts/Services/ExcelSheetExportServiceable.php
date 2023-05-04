@@ -7,7 +7,7 @@ use Magpie\Exceptions\SafetyCommonException;
 /**
  * Service interface to export to Excel sheet
  */
-interface ExcelSheetExportServiceable
+interface ExcelSheetExportServiceable extends ExcelResourceManageable
 {
     /**
      * Access a row

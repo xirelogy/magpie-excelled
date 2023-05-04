@@ -9,7 +9,7 @@ use MagpieLib\Excelled\Objects\Shims\ExcelColumnDefaultSize;
 /**
  * Service interface to export to Excel column
  */
-interface ExcelColumnExportServiceable extends ExcelGeneralExportServiceable
+interface ExcelColumnExportServiceable extends ExcelGeneralExportServiceable, ExcelResourceManageable
 {
     /**
      * Set column width

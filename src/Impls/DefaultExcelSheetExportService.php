@@ -2,8 +2,10 @@
 
 namespace MagpieLib\Excelled\Impls;
 
+use Magpie\General\Concepts\Releasable;
 use MagpieLib\Excelled\Concepts\Services\ExcelCellExportServiceable;
 use MagpieLib\Excelled\Concepts\Services\ExcelColumnExportServiceable;
+use MagpieLib\Excelled\Concepts\Services\ExcelExportServiceable;
 use MagpieLib\Excelled\Concepts\Services\ExcelRowExportServiceable;
 use MagpieLib\Excelled\Concepts\Services\ExcelSheetExportServiceable;
 use MagpieLib\Excelled\Strategies\ExcelNames;
@@ -16,6 +18,10 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet as PhpOfficeWorksheet;
 class DefaultExcelSheetExportService implements ExcelSheetExportServiceable
 {
     /**
+     * @var ExcelExportServiceable Parent service
+     */
+    protected ExcelExportServiceable $parentService;
+    /**
      * @var PhpOfficeWorksheet Associated worksheet
      */
     protected PhpOfficeWorksheet $worksheet;
@@ -23,11 +29,22 @@ class DefaultExcelSheetExportService implements ExcelSheetExportServiceable
 
     /**
      * Constructor
+     * @param ExcelExportServiceable $parentService
      * @param PhpOfficeWorksheet $worksheet
      */
-    public function __construct(PhpOfficeWorksheet $worksheet)
+    public function __construct(ExcelExportServiceable $parentService, PhpOfficeWorksheet $worksheet)
     {
+        $this->parentService = $parentService;
         $this->worksheet = $worksheet;
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function addReleasable(Releasable $resource) : void
+    {
+        $this->parentService->addReleasable($resource);
     }
 
 
@@ -36,7 +53,7 @@ class DefaultExcelSheetExportService implements ExcelSheetExportServiceable
      */
     public function accessRow(int $row) : ExcelRowExportServiceable
     {
-        return new DefaultExcelRowExportService($this->worksheet, $row);
+        return new DefaultExcelRowExportService($this, $this->worksheet, $row);
     }
 
 
@@ -45,7 +62,7 @@ class DefaultExcelSheetExportService implements ExcelSheetExportServiceable
      */
     public function accessColumn(int $col) : ExcelColumnExportServiceable
     {
-        return new DefaultExcelColumnExportService($this->worksheet, $col);
+        return new DefaultExcelColumnExportService($this, $this->worksheet, $col);
     }
 
 
@@ -54,7 +71,7 @@ class DefaultExcelSheetExportService implements ExcelSheetExportServiceable
      */
     public function accessCell(int $row, int $col, ?int $row2 = null, ?int $col2 = null) : ExcelCellExportServiceable
     {
-        return new DefaultExcelCellExportService($this->worksheet, $row, $col, $row2, $col2);
+        return new DefaultExcelCellExportService($this, $this->worksheet, $row, $col, $row2, $col2);
     }
 
 

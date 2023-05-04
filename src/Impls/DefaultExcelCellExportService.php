@@ -3,7 +3,9 @@
 namespace MagpieLib\Excelled\Impls;
 
 use Magpie\Exceptions\UnsupportedException;
+use Magpie\General\Concepts\Releasable;
 use MagpieLib\Excelled\Concepts\Services\ExcelCellExportServiceable;
+use MagpieLib\Excelled\Concepts\Services\ExcelSheetExportServiceable;
 use MagpieLib\Excelled\Strategies\ExcelNames;
 use PhpOffice\PhpSpreadsheet\Style\Style as PhpOfficeStyle;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet as PhpOfficeWorksheet;
@@ -14,6 +16,10 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet as PhpOfficeWorksheet;
  */
 class DefaultExcelCellExportService extends DefaultExcelGeneralExportService implements ExcelCellExportServiceable
 {
+    /**
+     * @var ExcelSheetExportServiceable Parent service
+     */
+    protected ExcelSheetExportServiceable $parentService;
     /**
      * @var PhpOfficeWorksheet Associated worksheet
      */
@@ -30,17 +36,28 @@ class DefaultExcelCellExportService extends DefaultExcelGeneralExportService imp
 
     /**
      * Constructor
+     * @param ExcelSheetExportServiceable $parentService
      * @param PhpOfficeWorksheet $worksheet
      * @param int $row
      * @param int $col
      * @param int|null $row2
      * @param int|null $col2
      */
-    public function __construct(PhpOfficeWorksheet $worksheet, int $row, int $col, ?int $row2, ?int $col2)
+    public function __construct(ExcelSheetExportServiceable $parentService, PhpOfficeWorksheet $worksheet, int $row, int $col, ?int $row2, ?int $col2)
     {
+        $this->parentService = $parentService;
         $this->worksheet = $worksheet;
         $this->cellName = static::formatCellName($row, $col, $row2, $col2);
         $this->isRange = $row2 !== null || $col2 !== null;
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function addReleasable(Releasable $resource) : void
+    {
+        $this->parentService->addReleasable($resource);
     }
 
 
