@@ -70,46 +70,59 @@ class ExcelTableSheetExportDefinition extends ExcelSheetExportDefinition
             ++$columnIndex;
         }
 
-        // Create sheet
-        $sheetService = $service->createSheet($this->sheetName);
 
-        // Output the header
-        $currentRowIndex = 0;
-        foreach ($columns as $columnMetadata) {
-            $sheetService->accessCell($currentRowIndex, $columnMetadata->index)->setValue($columnMetadata->definition->name);
-            if (!Str::isNullOrEmpty($columnMetadata->definition->excelFormatString)) $sheetService->accessColumn($columnMetadata->index)->setFormat($columnMetadata->definition->excelFormatString);
-        }
-        ++$currentRowIndex;
+        try {
+            $this->schema->_setColumnIndexResolver(function (ColumnDefinition $def) use ($columns) : ?int {
+                if ($def->id === null) return null;
+                if (!array_key_exists($def->id, $columns)) return null;
 
-        $totalHeaderRows = $currentRowIndex;
+                $columnMetadata = $columns[$def->id];
+                return $columnMetadata->index;
+            });
 
-        // Process and output the rows
-        foreach ($this->rows as $row) {
-            $rowCells = $this->translateRow($columns, $row);
-            $currentColumnIndex = 0;
-            foreach ($rowCells as $cell) {
-                $sheetService->accessCell($currentRowIndex, $currentColumnIndex)->setValue($cell);
-                ++$currentColumnIndex;
+            // Create sheet
+            $sheetService = $service->createSheet($this->sheetName);
+
+            // Output the header
+            $currentRowIndex = 0;
+            foreach ($columns as $columnMetadata) {
+                $sheetService->accessCell($currentRowIndex, $columnMetadata->index)->setValue($columnMetadata->definition->name);
+                if (!Str::isNullOrEmpty($columnMetadata->definition->excelFormatString)) $sheetService->accessColumn($columnMetadata->index)->setFormat($columnMetadata->definition->excelFormatString);
             }
             ++$currentRowIndex;
+
+            $totalHeaderRows = $currentRowIndex;
+
+            // Process and output the rows
+            foreach ($this->rows as $row) {
+                $rowCells = $this->translateRow($columns, $row);
+                $currentColumnIndex = 0;
+                foreach ($rowCells as $cell) {
+                    $sheetService->accessCell($currentRowIndex, $currentColumnIndex)->setValue($cell);
+                    ++$currentColumnIndex;
+                }
+                ++$currentRowIndex;
+            }
+
+            // Resize columns (default to auto-size)
+            foreach ($columns as $columnMetadata) {
+                $sheetService->accessColumn($columnMetadata->index)->setWidth($columnMetadata->definition->setWidth ?? ExcelColumnAutoSize::create());
+            }
+
+            // Set header styles
+            $headerStyles = iter_flatten($this->getHeaderStyles(), false);
+            for ($row = 0; $row < $totalHeaderRows; ++$row) {
+                $sheetService->accessRow($row)->applyStyle(...$headerStyles);
+            }
+
+            // Common freeze
+            $sheetService->freezePane($totalHeaderRows, 0);
+
+            // Finalize
+            $service->finalize($mimeType);
+        } finally {
+            $this->schema->_setColumnIndexResolver(null);
         }
-
-        // Resize columns (default to auto-size)
-        foreach ($columns as $columnMetadata) {
-            $sheetService->accessColumn($columnMetadata->index)->setWidth($columnMetadata->definition->setWidth ?? ExcelColumnAutoSize::create());
-        }
-
-        // Set header styles
-        $headerStyles = iter_flatten($this->getHeaderStyles(), false);
-        for ($row = 0; $row < $totalHeaderRows; ++$row) {
-            $sheetService->accessRow($row)->applyStyle(...$headerStyles);
-        }
-
-        // Common freeze
-        $sheetService->freezePane($totalHeaderRows, 0);
-
-        // Finalize
-        $service->finalize($mimeType);
     }
 
 
