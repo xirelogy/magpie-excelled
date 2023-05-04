@@ -10,6 +10,8 @@ use MagpieLib\Excelled\Concepts\ExcelFormatterAdaptable;
 use MagpieLib\Excelled\Concepts\Services\ExcelCellExportServiceable;
 use MagpieLib\Excelled\Concepts\Services\ExcelSheetExportServiceable;
 use MagpieLib\Excelled\Objects\ExcelComment;
+use MagpieLib\Excelled\Objects\ExcelImage;
+use MagpieLib\Excelled\Objects\ExcelImageBuilder;
 use MagpieLib\Excelled\Strategies\ExcelNames;
 use PhpOffice\PhpSpreadsheet\Style\Style as PhpOfficeStyle;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet as PhpOfficeWorksheet;
@@ -94,6 +96,24 @@ class DefaultExcelCellExportService extends DefaultExcelGeneralExportService imp
         } else {
             $this->worksheet->setCellValue($this->cellName, $value);
         }
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function addImage(ExcelImageBuilder $builder) : ExcelImage
+    {
+        if ($this->isRange) throw new UnsupportedException();
+
+        return OfficeExcepts::protect(function () use ($builder) {
+            $excelDrawing = $builder->_build($this->parentService);
+            $excelDrawing->setCoordinates($this->cellName);
+            $excelDrawing->setWorksheet($this->worksheet);
+            $excelDrawing->setOffsetX2($excelDrawing->getImageWidth());
+            $excelDrawing->setOffsetY2($excelDrawing->getImageHeight());
+            return new ExcelDrawingImage($excelDrawing);
+        });
     }
 
 
