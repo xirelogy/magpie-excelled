@@ -2,6 +2,7 @@
 
 namespace MagpieLib\Excelled\Concepts\Services;
 
+use Magpie\Codecs\Formats\Formatter;
 use Magpie\Exceptions\SafetyCommonException;
 
 /**
@@ -12,8 +13,9 @@ interface ExcelCellExportServiceable extends ExcelGeneralExportServiceable, Exce
     /**
      * Set cell value
      * @param mixed $value
+     * @param Formatter|null $formatter
      * @return void
      * @throws SafetyCommonException
      */
-    public function setValue(mixed $value) : void;
+    public function setValue(mixed $value, ?Formatter $formatter = null) : void;
 }

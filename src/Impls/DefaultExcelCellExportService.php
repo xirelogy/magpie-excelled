@@ -2,8 +2,10 @@
 
 namespace MagpieLib\Excelled\Impls;
 
+use Magpie\Codecs\Formats\Formatter;
 use Magpie\Exceptions\UnsupportedException;
 use Magpie\General\Concepts\Releasable;
+use MagpieLib\Excelled\Concepts\ExcelFormatterAdaptable;
 use MagpieLib\Excelled\Concepts\Services\ExcelCellExportServiceable;
 use MagpieLib\Excelled\Concepts\Services\ExcelSheetExportServiceable;
 use MagpieLib\Excelled\Strategies\ExcelNames;
@@ -25,6 +27,10 @@ class DefaultExcelCellExportService extends DefaultExcelGeneralExportService imp
      */
     protected readonly PhpOfficeWorksheet $worksheet;
     /**
+     * @var ExcelFormatterAdaptable Format adapter
+     */
+    protected readonly ExcelFormatterAdaptable $formatAdapter;
+    /**
      * @var string Associated cell name
      */
     protected readonly string $cellName;
@@ -38,15 +44,17 @@ class DefaultExcelCellExportService extends DefaultExcelGeneralExportService imp
      * Constructor
      * @param ExcelSheetExportServiceable $parentService
      * @param PhpOfficeWorksheet $worksheet
+     * @param ExcelFormatterAdaptable $formatAdapter
      * @param int $row
      * @param int $col
      * @param int|null $row2
      * @param int|null $col2
      */
-    public function __construct(ExcelSheetExportServiceable $parentService, PhpOfficeWorksheet $worksheet, int $row, int $col, ?int $row2, ?int $col2)
+    public function __construct(ExcelSheetExportServiceable $parentService, PhpOfficeWorksheet $worksheet, ExcelFormatterAdaptable $formatAdapter, int $row, int $col, ?int $row2, ?int $col2)
     {
         $this->parentService = $parentService;
         $this->worksheet = $worksheet;
+        $this->formatAdapter = $formatAdapter;
         $this->cellName = static::formatCellName($row, $col, $row2, $col2);
         $this->isRange = $row2 !== null || $col2 !== null;
     }
@@ -64,11 +72,26 @@ class DefaultExcelCellExportService extends DefaultExcelGeneralExportService imp
     /**
      * @inheritDoc
      */
-    public function setValue(mixed $value) : void
+    public function setValue(mixed $value, ?Formatter $formatter = null) : void
     {
         if ($this->isRange) throw new UnsupportedException();
 
-        $this->worksheet->setCellValue($this->cellName, $value);
+        if ($formatter !== null) {
+            $excelFormatter = $this->formatAdapter->adapt($formatter);
+            $excelFormatString = $excelFormatter->getExcelFormatString();
+            if ($excelFormatString !== null) $this->setFormat($excelFormatString);
+
+            $excelDataType = ExcelDataType::getDataType($excelFormatString);
+            $formattedValue = $formatter->format($value);
+
+            if ($excelDataType !== null) {
+                $this->worksheet->setCellValueExplicit($this->cellName, $formattedValue, $excelDataType);
+            } else {
+                $this->worksheet->setCellValue($this->cellName, $formattedValue);
+            }
+        } else {
+            $this->worksheet->setCellValue($this->cellName, $value);
+        }
     }
 
 

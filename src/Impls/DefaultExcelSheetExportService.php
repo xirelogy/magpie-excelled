@@ -3,6 +3,7 @@
 namespace MagpieLib\Excelled\Impls;
 
 use Magpie\General\Concepts\Releasable;
+use MagpieLib\Excelled\Concepts\ExcelFormatterAdaptable;
 use MagpieLib\Excelled\Concepts\Services\ExcelCellExportServiceable;
 use MagpieLib\Excelled\Concepts\Services\ExcelColumnExportServiceable;
 use MagpieLib\Excelled\Concepts\Services\ExcelExportServiceable;
@@ -25,17 +26,23 @@ class DefaultExcelSheetExportService implements ExcelSheetExportServiceable
      * @var PhpOfficeWorksheet Associated worksheet
      */
     protected PhpOfficeWorksheet $worksheet;
+    /**
+     * @var ExcelFormatterAdaptable Format adapter
+     */
+    protected ExcelFormatterAdaptable $formatAdapter;
 
 
     /**
      * Constructor
      * @param ExcelExportServiceable $parentService
      * @param PhpOfficeWorksheet $worksheet
+     * @param ExcelFormatterAdaptable $formatAdapter
      */
-    public function __construct(ExcelExportServiceable $parentService, PhpOfficeWorksheet $worksheet)
+    public function __construct(ExcelExportServiceable $parentService, PhpOfficeWorksheet $worksheet, ExcelFormatterAdaptable $formatAdapter)
     {
         $this->parentService = $parentService;
         $this->worksheet = $worksheet;
+        $this->formatAdapter = $formatAdapter;
     }
 
 
@@ -71,7 +78,7 @@ class DefaultExcelSheetExportService implements ExcelSheetExportServiceable
      */
     public function accessCell(int $row, int $col, ?int $row2 = null, ?int $col2 = null) : ExcelCellExportServiceable
     {
-        return new DefaultExcelCellExportService($this, $this->worksheet, $row, $col, $row2, $col2);
+        return new DefaultExcelCellExportService($this, $this->worksheet, $this->formatAdapter, $row, $col, $row2, $col2);
     }
 
 

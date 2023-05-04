@@ -85,7 +85,7 @@ class DefaultExcelExportService implements ExcelExportServiceable
     {
         $worksheet = $this->workbook->createSheet();
         if ($sheetName !== null) $worksheet->setTitle($sheetName);
-        return new DefaultExcelSheetExportService($this, $worksheet);
+        return new DefaultExcelSheetExportService($this, $worksheet, $this->formatAdapter);
     }
 
 
