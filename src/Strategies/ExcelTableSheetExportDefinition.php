@@ -2,6 +2,7 @@
 
 namespace MagpieLib\Excelled\Strategies;
 
+use Magpie\Codecs\Formats\Formatter;
 use Magpie\Exceptions\DuplicatedKeyException;
 use Magpie\Exceptions\PersistenceException;
 use Magpie\Exceptions\SafetyCommonException;
@@ -52,6 +53,8 @@ class ExcelTableSheetExportDefinition extends ExcelSheetExportDefinition
      */
     protected function onRun(ExcelExportServiceable $service, ?string &$mimeType = null) : void
     {
+        /** @var array<int, string> $columnIds */
+        $columnIds = [];
         /** @var array<string, ColumnMetadata> $columns */
         $columns = [];
 
@@ -65,6 +68,7 @@ class ExcelTableSheetExportDefinition extends ExcelSheetExportDefinition
             if (array_key_exists($column->id, $columns)) throw new DuplicatedKeyException($column->id);
 
             $column = $service->adaptColumnDefinition($column);
+            $columnIds[$columnIndex] = $column->id;
             $columns[$column->id] = new ColumnMetadata($column, $columnIndex);
 
             ++$columnIndex;
@@ -98,7 +102,8 @@ class ExcelTableSheetExportDefinition extends ExcelSheetExportDefinition
                 $rowCells = $this->translateRow($columns, $row);
                 $currentColumnIndex = 0;
                 foreach ($rowCells as $cell) {
-                    $sheetService->accessCell($currentRowIndex, $currentColumnIndex)->setValue($cell);
+                    $columnFormat = static::getColumnFormat($columns, $columnIds, $currentColumnIndex);
+                    $sheetService->accessCell($currentRowIndex, $currentColumnIndex)->setValue($cell, $columnFormat);
                     ++$currentColumnIndex;
                 }
                 ++$currentRowIndex;
@@ -124,6 +129,23 @@ class ExcelTableSheetExportDefinition extends ExcelSheetExportDefinition
         } finally {
             $this->schema->_setColumnIndexResolver(null);
         }
+    }
+
+
+    /**
+     * Get column format
+     * @param array<string, ColumnMetadata> $columns
+     * @param array<int, string> $columnIds
+     * @param int $columnIndex
+     * @return Formatter|null
+     */
+    private static function getColumnFormat(array $columns, array $columnIds, int $columnIndex) : ?Formatter
+    {
+        $columnId = $columnIds[$columnIndex] ?? null;
+        if ($columnId === null) return null;
+
+        $column = $columns[$columnId] ?? null;
+        return $column?->definition?->format;
     }
 
 
@@ -157,7 +179,6 @@ class ExcelTableSheetExportDefinition extends ExcelSheetExportDefinition
              */
             foreach ($this->schema->mappedTranslate($row) as $column => $value) {
                 $columnMetadata = $columns[$column->id ?? ''] ?? throw new UnsupportedValueException($column, _l('column'));
-                if ($column->format !== null) $value = $column->format->format($value);
                 $retCells[$columnMetadata->index] = $value;
             }
 
