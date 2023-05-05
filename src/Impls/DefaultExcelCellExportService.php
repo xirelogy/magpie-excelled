@@ -80,7 +80,7 @@ class DefaultExcelCellExportService extends DefaultExcelGeneralExportService imp
     {
         if ($this->isRange) throw new UnsupportedException();
 
-        if ($formatter !== null) {
+        if ($value !== null && $formatter !== null) {
             $excelFormatter = $this->formatAdapter->adapt($formatter);
             $excelFormatString = $excelFormatter->getExcelFormatString();
             if ($excelFormatString !== null) $this->setFormat($excelFormatString);
