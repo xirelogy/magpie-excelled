@@ -37,10 +37,9 @@ abstract class ExcelExportTableSchema extends ExcelExportSheetSchema implements 
 
     /**
      * Set the column index resolver
-     * @param callable(ColumnDefinition):int|null|null $fn
+     * @param (callable(ColumnDefinition):int|null)|null $fn
      * @return void
      * @internal
-     * @noinspection PhpDocSignatureInspection
      */
     public function _setColumnIndexResolver(?callable $fn) : void
     {
