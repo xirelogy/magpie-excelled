@@ -23,6 +23,7 @@ class ExcelColumnDefinition extends ColumnDefinition
      * @param string $name
      * @param Formatter|null $format
      * @param string $excelFormatString
+     * @param float|ExcelColumnAutoSize|ExcelColumnDefaultSize|null $setWidth
      */
     public function __construct(string $name, ?Formatter $format = null, string $excelFormatString = ExcelCellFormat::GENERAL, float|ExcelColumnAutoSize|ExcelColumnDefaultSize|null $setWidth = null)
     {
