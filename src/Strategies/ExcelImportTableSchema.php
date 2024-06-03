@@ -11,6 +11,8 @@ use MagpieLib\Excelled\Impls\ExcelArrayParserHost;
 
 /**
  * A schema to import Excel as a table
+ * @template T Type of the resulting import
+ * @implements TableImportable<T>
  */
 abstract class ExcelImportTableSchema implements TableImportable
 {
@@ -56,7 +58,7 @@ abstract class ExcelImportTableSchema implements TableImportable
      * Import from given source
      * @param ExcelImporter $source
      * @param ExcelImportOptions|null $options
-     * @return iterable
+     * @return iterable<T>
      * @throws SafetyCommonException
      */
     public final function import(ExcelImporter $source, ?ExcelImportOptions $options = null) : iterable

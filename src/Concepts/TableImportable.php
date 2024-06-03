@@ -7,13 +7,14 @@ use Magpie\Exceptions\SafetyCommonException;
 
 /**
  * Table-like import schema
+ * @template T
  */
 interface TableImportable
 {
     /**
      * Parse data
      * @param ParserHost $parserHost
-     * @return mixed
+     * @return T
      * @throws SafetyCommonException
      */
     public function parseRow(ParserHost $parserHost) : mixed;
