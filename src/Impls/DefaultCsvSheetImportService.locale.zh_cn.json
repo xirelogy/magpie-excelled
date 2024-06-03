@@ -1,0 +1,7 @@
+{
+  "Invalid character after end of quote": "结束引号后的非法字符",
+  "Invalid character '{{0}}' after end of quote": "结束引号后的非法字符'{{0}}'",
+  "Invalid parse state": "非法的解析状态",
+  "Unexpected end of stream": "未预料的流结束",
+  "": ""
+}

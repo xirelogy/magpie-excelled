@@ -3,9 +3,9 @@
 namespace MagpieLib\Excelled\Strategies;
 
 /**
- * Options for importer
+ * Options for importer (Excel)
  */
-class ExcelImporterOptions
+class ExcelImporterOptions extends CommonImporterOptions
 {
     /**
      * @var bool If save memory
@@ -22,15 +22,5 @@ class ExcelImporterOptions
     {
         $this->isSaveMemory = $isSave;
         return $this;
-    }
-
-
-    /**
-     * Default options
-     * @return static
-     */
-    public static function default() : static
-    {
-        return new static();
     }
 }

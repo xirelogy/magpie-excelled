@@ -12,7 +12,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet as PhpOfficeSpreadsheet;
 /**
  * Excel importer instance
  */
-class ExcelImporter
+class ExcelImporter extends CommonImporter
 {
     /**
      * @var PhpOfficeSpreadsheet Associated workbook
@@ -28,30 +28,26 @@ class ExcelImporter
      */
     protected function __construct(TargetReadable $target, ExcelImporterOptions $options)
     {
+        parent::__construct();
         $this->workbook = ExcelIO::readWorkbookFromTarget($target, $options->isSaveMemory);
     }
 
 
     /**
-     * Access to the service interface
-     * @return ExcelImportServiceable
-     * @internal
+     * @inheritDoc
      */
-    public function _getService() : ExcelImportServiceable
+    protected function onGetService() : ExcelImportServiceable
     {
         return new DefaultExcelImportService($this->workbook);
     }
 
 
     /**
-     * Create an instance
-     * @param TargetReadable $target
-     * @param ExcelImporterOptions|null $options
-     * @return static
-     * @throws SafetyCommonException
+     * @inheritDoc
      */
-    public static function create(TargetReadable $target, ?ExcelImporterOptions $options = null) : static
+    protected static function onCreate(TargetReadable $target, CommonImporterOptions $options) : static
     {
-        return new static($target, $options ?? ExcelImportOptions::default());
+        $options = $options instanceof ExcelImporterOptions ? $options : ExcelImporterOptions::default();
+        return new static($target, $options);
     }
 }

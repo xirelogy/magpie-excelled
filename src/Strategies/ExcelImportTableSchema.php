@@ -56,12 +56,12 @@ abstract class ExcelImportTableSchema implements TableImportable
 
     /**
      * Import from given source
-     * @param ExcelImporter $source
+     * @param CommonImporter $source
      * @param ExcelImportOptions|null $options
      * @return iterable<T>
      * @throws SafetyCommonException
      */
-    public final function import(ExcelImporter $source, ?ExcelImportOptions $options = null) : iterable
+    public final function import(CommonImporter $source, ?ExcelImportOptions $options = null) : iterable
     {
         $options = $options ?? ExcelImportOptions::default();
 
