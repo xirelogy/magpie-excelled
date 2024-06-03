@@ -23,11 +23,12 @@ class ExcelImporter
     /**
      * Constructor
      * @param TargetReadable $target
+     * @param bool $isSaveMemory
      * @throws SafetyCommonException
      */
-    protected function __construct(TargetReadable $target)
+    protected function __construct(TargetReadable $target, bool $isSaveMemory)
     {
-        $this->workbook = ExcelIO::readWorkbookFromTarget($target);
+        $this->workbook = ExcelIO::readWorkbookFromTarget($target, $isSaveMemory);
     }
 
 
@@ -45,11 +46,12 @@ class ExcelImporter
     /**
      * Create an instance
      * @param TargetReadable $target
+     * @param bool $isSaveMemory
      * @return static
      * @throws SafetyCommonException
      */
-    public static function create(TargetReadable $target) : static
+    public static function create(TargetReadable $target, bool $isSaveMemory = true) : static
     {
-        return new static($target);
+        return new static($target, $isSaveMemory);
     }
 }

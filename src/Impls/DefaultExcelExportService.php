@@ -84,7 +84,7 @@ class DefaultExcelExportService implements ExcelExportServiceable
      */
     public function load(TargetReadable $target) : void
     {
-        $this->workbook = ExcelIO::readWorkbookFromTarget($target);
+        $this->workbook = ExcelIO::readWorkbookFromTarget($target, false);
     }
 
 
