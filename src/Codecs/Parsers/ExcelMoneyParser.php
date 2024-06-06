@@ -15,6 +15,11 @@ class ExcelMoneyParser extends CreatableParser
      */
     protected function onParse(mixed $value, ?string $hintName) : int
     {
+        // Remove all group separators
+        if (gettype($value) === 'string') {
+            $value = str_replace(',', '', $value);
+        }
+
         $value = FloatParser::create()->withPrecision(2)->parse($value, $hintName);
         return floor($value * 100);
     }
