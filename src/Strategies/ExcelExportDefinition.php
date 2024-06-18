@@ -24,18 +24,18 @@ abstract class ExcelExportDefinition
      */
     public final function _run(ExcelExportServiceable $service, ?string &$mimeType = null) : void
     {
-        $this->onRun($service, $mimeType);
+        $this->onRun($service);
+        $service->finalize($mimeType);
     }
 
 
     /**
      * Run the export
      * @param ExcelExportServiceable $service
-     * @param string|null $mimeType
      * @return void
      * @throws SafetyCommonException
      * @throws PersistenceException
      * @throws StreamException
      */
-    protected abstract function onRun(ExcelExportServiceable $service, ?string &$mimeType = null) : void;
+    protected abstract function onRun(ExcelExportServiceable $service) : void;
 }

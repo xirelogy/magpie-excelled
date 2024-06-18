@@ -51,7 +51,7 @@ class ExcelTableSheetExportDefinition extends ExcelSheetExportDefinition
     /**
      * @inheritDoc
      */
-    protected function onRun(ExcelExportServiceable $service, ?string &$mimeType = null) : void
+    protected function onRun(ExcelExportServiceable $service) : void
     {
         /** @var array<int, string> $columnIds */
         $columnIds = [];
@@ -125,7 +125,6 @@ class ExcelTableSheetExportDefinition extends ExcelSheetExportDefinition
 
             // Finalize
             $this->schema->finalizeSheet($sheetService);
-            $service->finalize($mimeType);
         } finally {
             $this->schema->_setColumnIndexResolver(null);
         }

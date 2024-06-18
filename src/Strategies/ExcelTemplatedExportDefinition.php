@@ -25,12 +25,9 @@ class ExcelTemplatedExportDefinition extends ExcelExportDefinition
     /**
      * @inheritDoc
      */
-    protected function onRun(ExcelExportServiceable $service, ?string &$mimeType = null) : void
+    protected function onRun(ExcelExportServiceable $service) : void
     {
         $this->schema->exportUsing($service);
-
-        // Finalize
-        $service->finalize($mimeType);
     }
 
 
