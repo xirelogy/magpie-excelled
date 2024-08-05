@@ -32,7 +32,7 @@ class ExcelImportTableColumnsSchema
     /**
      * Define a column as required
      * @param string $columnName
-     * @param array|string|null $altNames
+     * @param array<string>|string|null $altNames
      * @return $this
      * @throws SafetyCommonException
      */
@@ -46,7 +46,7 @@ class ExcelImportTableColumnsSchema
     /**
      * Define a column as optional
      * @param string $columnName
-     * @param array|string|null $altNames
+     * @param array<string>|string|null $altNames
      * @return $this
      * @throws SafetyCommonException
      */
@@ -111,7 +111,7 @@ class ExcelImportTableColumnsSchema
      * Define a column
      * @param bool $isRequired
      * @param string $columnName
-     * @param array $altNames
+     * @param array<string> $altNames
      * @return void
      * @throws SafetyCommonException
      */
