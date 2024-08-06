@@ -94,7 +94,7 @@ class DefaultCsvSheetImportService implements ExcelSheetImportServiceable
                                 $state = DefaultCsvSheetImportServiceParseState::UTF_HEADER_1;
                             } else {
                                 $retBuffer = '';
-                                $state = DefaultCsvSheetImportServiceParseState::CONTENT_NORMAL;
+                                $state = DefaultCsvSheetImportServiceParseState::INITIAL;
                                 $isReparse = true;
                             }
                             break;
