@@ -8,6 +8,18 @@ namespace MagpieLib\Excelled\Impls;
  */
 enum DefaultCsvSheetImportServiceParseState : int {
     /**
+     * UTF header support (character 1)
+     */
+    case UTF_HEADER_0 = -3;
+    /**
+     * UTF header support (character 2)
+     */
+    case UTF_HEADER_1 = -2;
+    /**
+     * UTF header support (character 3)
+     */
+    case UTF_HEADER_2 = -1;
+    /**
      * Beginning state
      */
     case INITIAL = 0;

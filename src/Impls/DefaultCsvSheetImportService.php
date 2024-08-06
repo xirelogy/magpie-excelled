@@ -73,8 +73,9 @@ class DefaultCsvSheetImportService implements ExcelSheetImportServiceable
      */
     protected function readRowColumns() : iterable
     {
-        $state = DefaultCsvSheetImportServiceParseState::INITIAL;
+        $state = DefaultCsvSheetImportServiceParseState::UTF_HEADER_0;
 
+        $retBom = '';
         $retBuffer = '';
         $retRow = [];
 
@@ -86,6 +87,40 @@ class DefaultCsvSheetImportService implements ExcelSheetImportServiceable
                     $isReparse = false;
 
                     switch ($state) {
+                        case DefaultCsvSheetImportServiceParseState::UTF_HEADER_0:
+                            // Expecting BOM (1)
+                            if (ord($c) === 0xEF) {
+                                $retBom .= $c;
+                                $state = DefaultCsvSheetImportServiceParseState::UTF_HEADER_1;
+                            } else {
+                                $retBuffer = '';
+                                $state = DefaultCsvSheetImportServiceParseState::CONTENT_NORMAL;
+                                $isReparse = true;
+                            }
+                            break;
+                        case DefaultCsvSheetImportServiceParseState::UTF_HEADER_1:
+                            // Expecting BOM (2)
+                            if (ord($c) === 0xBB) {
+                                $retBom .= $c;
+                                $state = DefaultCsvSheetImportServiceParseState::UTF_HEADER_2;
+                            } else {
+                                $retBuffer = '';
+                                $state = DefaultCsvSheetImportServiceParseState::CONTENT_NORMAL;
+                                $isReparse = true;
+                            }
+                            break;
+                        case DefaultCsvSheetImportServiceParseState::UTF_HEADER_2:
+                            // Expecting BOM (3)
+                            if (ord($c) === 0xBF) {
+                                $state = DefaultCsvSheetImportServiceParseState::INITIAL;
+                            } else {
+                                $retBuffer = $retBom;
+                                $state = DefaultCsvSheetImportServiceParseState::CONTENT_NORMAL;
+                                $isReparse = true;
+                            }
+                            $retBom = '';
+                            break;
+
                         case DefaultCsvSheetImportServiceParseState::INITIAL:
                             // Beginning state
                             switch ($c) {
