@@ -79,7 +79,7 @@ abstract class ExcelImportTableSchema implements TableImportable
                 $this->onHeaderRow($rowArray);
                 --$headerRowCount;
             } else {
-                $parserHost = new ExcelArrayParserHost($rowArray, $thisRowIndex, $this->headerMap);
+                $parserHost = new ExcelArrayParserHost($rowArray, $thisRowIndex, $this->headerMap, $options);
                 yield $this->parseRow($parserHost);
             }
         }

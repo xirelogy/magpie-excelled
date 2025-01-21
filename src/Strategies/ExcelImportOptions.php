@@ -15,6 +15,10 @@ class ExcelImportOptions
      * @var bool If import images
      */
     public bool $isImportImages = false;
+    /**
+     * @var string|null String cleanup character
+     */
+    public ?string $stringCleanup = null;
 
 
     /**
@@ -38,6 +42,28 @@ class ExcelImportOptions
     {
         $this->isImportImages = $isImportImages;
         return $this;
+    }
+
+
+    /**
+     * Specify string cleanup
+     * @param string|null $cleanup
+     * @return $this
+     */
+    public function withStringCleanup(?string $cleanup) : static
+    {
+        $this->stringCleanup = $cleanup;
+        return $this;
+    }
+
+
+    /**
+     * Specify string cleanup: 'ZERO WIDTH SPACE'
+     * @return $this
+     */
+    public function withStringCleanupZWSP() : static
+    {
+        return $this->withStringCleanup("\u{200B}");
     }
 
 

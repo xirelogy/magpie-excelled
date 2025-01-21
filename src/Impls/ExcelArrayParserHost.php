@@ -3,6 +3,7 @@
 namespace MagpieLib\Excelled\Impls;
 
 use Magpie\Codecs\ParserHosts\ArrayParserHost;
+use MagpieLib\Excelled\Strategies\ExcelImportOptions;
 use MagpieLib\Excelled\Strategies\ExcelNames;
 
 /**
@@ -19,6 +20,10 @@ class ExcelArrayParserHost extends ArrayParserHost
      * @var array|null Named indices
      */
     protected readonly ?array $namedIndices;
+    /**
+     * @var ExcelImportOptions|null Import options (Excel)
+     */
+    protected readonly ?ExcelImportOptions $excelOptions;
 
 
     /**
@@ -26,14 +31,16 @@ class ExcelArrayParserHost extends ArrayParserHost
      * @param array $arr
      * @param int $refRowIndex
      * @param array<string, int>|null $namedIndices
+     * @param ExcelImportOptions|null $excelOptions
      * @param string|null $prefix
      */
-    public function __construct(array $arr, int $refRowIndex, ?array $namedIndices, ?string $prefix = null)
+    public function __construct(array $arr, int $refRowIndex, ?array $namedIndices, ?ExcelImportOptions $excelOptions, ?string $prefix = null)
     {
         parent::__construct($arr, $prefix);
 
         $this->refRowIndex = $refRowIndex;
         $this->namedIndices = $namedIndices;
+        $this->excelOptions = $excelOptions;
     }
 
 
@@ -61,5 +68,24 @@ class ExcelArrayParserHost extends ArrayParserHost
         if ($key < 0) return '<err>';
 
         return $this->prefix . ExcelNames::cellNameOf($this->refRowIndex, $key);
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    protected function obtainRaw(int|string $key, int|string $inKey, bool $isMandatory, mixed $default) : mixed
+    {
+        $ret = parent::obtainRaw($key, $inKey, $isMandatory, $default);
+
+        // Extra string cleanup
+        $stringCleanup = $this->excelOptions?->stringCleanup;
+        if (is_string($ret) && $stringCleanup !== null) {
+            if (str_starts_with($ret, $stringCleanup)) {
+                $ret = substr($ret, strlen($stringCleanup));
+            }
+        }
+
+        return $ret;
     }
 }
