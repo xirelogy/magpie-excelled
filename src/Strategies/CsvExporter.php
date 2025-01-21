@@ -4,28 +4,28 @@ namespace MagpieLib\Excelled\Strategies;
 
 use Magpie\General\Concepts\TargetWritable;
 use MagpieLib\Excelled\Concepts\Services\ExcelExportServiceable;
-use MagpieLib\Excelled\Impls\DefaultExcelExportService;
+use MagpieLib\Excelled\Impls\DefaultCsvExportService;
 
 /**
- * Excel exporter instance
+ * CSV exporter instance
  */
-class ExcelExporter extends CommonExporter
+class CsvExporter extends CommonExporter
 {
     /**
      * @inheritDoc
      */
     protected function createService(TargetWritable $target) : ExcelExportServiceable
     {
-        return new DefaultExcelExportService($this->formatAdapter, $target);
+        return new DefaultCsvExportService($this->formatAdapter, $target);
     }
 
 
     /**
      * Create an instance
-     * @param ExcelExportDefinition $def
+     * @param ExcelSheetExportDefinition $def
      * @return static
      */
-    public static function create(ExcelExportDefinition $def) : static
+    public static function create(ExcelSheetExportDefinition $def) : static
     {
         return new static($def);
     }
