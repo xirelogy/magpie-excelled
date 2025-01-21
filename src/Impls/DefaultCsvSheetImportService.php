@@ -261,7 +261,7 @@ class DefaultCsvSheetImportService implements ExcelSheetImportServiceable
             switch ($state) {
                 case DefaultCsvSheetImportServiceParseState::CONTENT_QUOTED:
                     // Unterminated quote content!
-                    throw new InvalidDataException('Unexpected end of stream');
+                    throw new InvalidDataException(_l('Unexpected end of stream'));
 
                 case DefaultCsvSheetImportServiceParseState::CONTENT_QUOTED_QUOTE:
                     // Healthy end quote, always merge the buffer
