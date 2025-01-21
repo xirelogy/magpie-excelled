@@ -43,6 +43,9 @@ class DefaultExcelRowExportService extends DefaultExcelGeneralExportService impl
     }
 
 
+    /**
+     * @inheritDoc
+     */
     public function addReleasable(Releasable $resource) : void
     {
         $this->parentService->addReleasable($resource);

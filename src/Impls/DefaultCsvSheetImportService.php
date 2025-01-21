@@ -249,7 +249,6 @@ class DefaultCsvSheetImportService implements ExcelSheetImportServiceable
                             }
                             break;
 
-                        /** @noinspection PhpUnusedSwitchBranchInspection */
                         default:
                             // Wrong state
                             throw new UnexpectedException(_l('Invalid parse state'));
