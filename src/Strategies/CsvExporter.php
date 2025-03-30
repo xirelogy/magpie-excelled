@@ -12,21 +12,43 @@ use MagpieLib\Excelled\Impls\DefaultCsvExportService;
 class CsvExporter extends CommonExporter
 {
     /**
+     * @var CsvExporterOptions Associated options
+     */
+    protected readonly CsvExporterOptions $options;
+
+
+    /**
+     * Constructor
+     * @param ExcelExportDefinition $def
+     * @param CsvExporterOptions $options
+     */
+    protected function __construct(ExcelExportDefinition $def, CsvExporterOptions $options)
+    {
+        parent::__construct($def);
+
+        $this->options = $options;
+    }
+
+
+    /**
      * @inheritDoc
      */
     protected function createService(TargetWritable $target) : ExcelExportServiceable
     {
-        return new DefaultCsvExportService($this->formatAdapter, $target);
+        return new DefaultCsvExportService($this->formatAdapter, $target, $this->options);
     }
 
 
     /**
      * Create an instance
      * @param ExcelSheetExportDefinition $def
+     * @param CsvExporterOptions|null $options
      * @return static
      */
-    public static function create(ExcelSheetExportDefinition $def) : static
+    public static function create(ExcelSheetExportDefinition $def, ?CsvExporterOptions $options = null) : static
     {
-        return new static($def);
+        $options = $options ?? CsvExporterOptions::default();
+
+        return new static($def, $options);
     }
 }

@@ -57,13 +57,19 @@ class DefaultCsvSheetExportService extends CommonExcelSheetExportService
      * @param ExcelExportServiceable $parentService
      * @param StreamWriteable $targetStream
      * @param ExcelFormatterAdaptable $formatAdapter
+     * @param bool $isOutputBom
+     * @throws StreamException
      */
-    public function __construct(ExcelExportServiceable $parentService, StreamWriteable $targetStream, ExcelFormatterAdaptable $formatAdapter)
+    public function __construct(ExcelExportServiceable $parentService, StreamWriteable $targetStream, ExcelFormatterAdaptable $formatAdapter, bool $isOutputBom)
     {
         parent::__construct($parentService);
 
         $this->targetStream = $targetStream;
         $this->formatAdapter = $formatAdapter;
+
+        if ($isOutputBom) {
+            $this->targetStream->write(chr(239) . chr(187) . chr(191));
+        }
     }
 
 
