@@ -1,6 +1,6 @@
 {
-  "Missing object constructor": "對象構建函數缺失",
-  "Object constructor must be public": "對象構建函數必須爲公共的",
+  "Missing object constructor": "物件構建函式缺失",
+  "Object constructor must be public": "物件構建函式必須為公共的",
   "parser specification": "解析器指定",
   "": ""
 }
